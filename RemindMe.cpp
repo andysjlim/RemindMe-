@@ -12,5 +12,12 @@ void createNewUser(string name){
 }
 
 bool foundUser(string name){
-
+    instream infile(name+".txt");
+    if(infile.is_open()){
+        infile.close();
+        return true;
+    }
+    else{
+        return false;
+    }
 }

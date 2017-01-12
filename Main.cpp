@@ -18,7 +18,6 @@ int main(int argc, const char**argv){
 		if(answer=="y"){
 			createNewUser(name);
 		} else if(answer=="n"){
-		} else{
 			perror("Invalid answer. Program will exit.");
 			return 0;
 		}
@@ -28,20 +27,27 @@ int main(int argc, const char**argv){
 		return 0;
 	}
 	if(foundUser(name)){
-		cout << "Would you like to review your reminders?" << endl;
+		cout << "Would you like to review your reminders? (y/n)" << endl;
 		getline(cin, answer);
-			if(answer=="y"){
-				TheReminder(name);
-			} else if(answer == "n"){
+		if(answer == "y"){
+			TheReminder(name);
+		} else if(answer == "n"){
 			cout << "Alright; program will now exit.";
+			return 0;
+		} else{
+			perror("Invalid answer. Program will exit.");
 			return 0;
 		}
 	}
 	else{
-		cout << "It seems like this name does not exist in the file. Would you like to make a new file with the name, " << name << "?" << endl;
+		cout << "It seems like this name does not exist in the file. 
+				Would you like to make a new file with the name, " << name << "?" << endl;
 		cin >> answer;
-		if(answer =="y"){
+		if(answer == "y"){
 			createNewUser(name);
+		} else{
+			cout << "Well then. The program will now exit.";
+			return 0;
 		}
 	}
 	return 0;

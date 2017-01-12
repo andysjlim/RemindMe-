@@ -6,6 +6,7 @@ void createNewUser(string name);
 bool foundUser(string name);
 void TheReminder(string name);
 void NewReminder();
+string FindCounter(string name);
 
 struct EachPart {
     int counter;

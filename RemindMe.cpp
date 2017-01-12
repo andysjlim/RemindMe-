@@ -5,28 +5,38 @@
 #include "RemindMe.h"
 using namespace std;
 
+//
+string FindCounter(string name){
+    ifstream infile("NameList.txt"){
+
+    }
+}
+
+//Create new user if not found in files.
 void createNewUser(string name){
     if(foundUser(name)){
         char answer;
         cout << "This user already exists. Are you sure you want to make a new file? (y/n)" << endl;
         cin >> answer;
         if(answer == 'y'){
-            string counter;
-            ifstream infile(name+".txt");
-            infile >> counter >> counter;
+            string counter = FindCounter(name);
             ofstream outfile(name+counter+".txt");
             outfile << name << endl;
-            infile.close();
             outfile.close();
         }
         else if(answer == 'n') {
-            cout << "Well";
+            cout << "Well, the program will continue on as the existed user's name.";
+            return 0;
+        }
+        else{
+            
         }
     }
     else{
+        cout << "Creating a new reminder file for " << name << ".\n";
         ofstream infile(name+".txt");
-        infile << name << " 1" << endl;
         infile.close();
+        return 0;
     }
 }
 

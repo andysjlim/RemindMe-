@@ -2,17 +2,17 @@
 #define REMINDME_H
 #include <string>
 using namespace std;
-void createNewUser(string name);
-bool foundUser(string name);
-void TheReminder(string name);
-void NewReminder();
-string FindCounter(string name);
+void createNewUser(const string name, string& counter);
+void TheReminder(const string name, const string counter);
+void NewReminder(const string name, const string counter);
+bool is_number(const string& s);
+bool foundUser(const string name);
+string FindCounter(const string name);
+void EditNameCount(const string);
 
 struct EachPart {
-    int counter;
     int day,month,year;
-    string assignment;
-    string category;
+    string assignment, category;
 };
 
 #endif

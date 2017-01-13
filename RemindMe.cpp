@@ -5,42 +5,27 @@
 #include "RemindMe.h"
 using namespace std;
 
-//
-string FindCounter(string name){
-    ifstream infile("NameList.txt"){
+//Because I ask for answers too much
+char answer;
 
+bool is_name(const string &s){
+    int i= 0;
+    while(s[i]){
+        if(!(isalpha(s[i]))) return false;
     }
+    return true;
 }
 
-//Create new user if not found in files.
-void createNewUser(string name){
-    if(foundUser(name)){
-        char answer;
-        cout << "This user already exists. Are you sure you want to make a new file? (y/n)" << endl;
-        cin >> answer;
-        if(answer == 'y'){
-            string counter = FindCounter(name);
-            ofstream outfile(name+counter+".txt");
-            outfile << name << endl;
-            outfile.close();
-        }
-        else if(answer == 'n') {
-            cout << "Well, the program will continue on as the existed user's name.";
-            return 0;
-        }
-        else{
-            
-        }
+bool is_number(const string& s)
+{
+    int i = 0;
+    while(s[i]){
+        if(!(isdigit(s[i]))) return false;
     }
-    else{
-        cout << "Creating a new reminder file for " << name << ".\n";
-        ofstream infile(name+".txt");
-        infile.close();
-        return 0;
-    }
+    return true;
 }
 
-bool foundUser(string name){
+bool foundUser(const string name){
     ifstream infile(name+".txt");
     if(infile.is_open()){
         infile.close();
@@ -51,13 +36,86 @@ bool foundUser(string name){
     }
 }
 
-void TheReminder(string name){
-    ifstream infile(name+".txt");
-    int month, day, year;
-    string category, assignment, duetime;
-    while(infile >> month >> day >> year >> duetime >> category >> assignment){
+void EditNameCount(const string name){
 
+}
+
+void NewReminder(const string name, const string counter){
+    cout << "Creating a new reminder file for " << name << ".\n";
+    cout << "File name will be " << name << counter << ".txt\n";
+    ofstream outfile(name+counter+".txt");
+    outfile.close();
+    EditNameCount(name);
+}
+
+//Find the amount of times the name was used.
+//Also edit the file so that the count is incremented.
+string FindCounter(const string name){
+    if(name == ""){
+    ifstream infile("NameList.txt");
+    infile.close();
+    }
+    return "";
+}
+
+//Create new user if not found in files.
+void createNewUser(const string name, string& counter){
+    if(foundUser(name+counter)){
+        cout << "This user already exists. Are you sure you want to make a new file? (y/n)" << endl;
+        cin >> answer;
+        if(answer == 'y'){
+            counter = FindCounter(name);
+            NewReminder(name, counter);
+        }
+        else if(answer == 'n') {
+            cout << "What is the number after your name in your file? (press Enter if no number) \n";
+            getline(cin, counter);
+            if(is_number(counter)){
+                return;
+            } else{
+                perror("This user does not exist or you have inputted an invalid input. Program will exit");
+                counter = "0";
+                return;
+            }
+        }
+        else{
+            perror("Invalid input");
+            counter = "0";
+            return;
+        }
+    }
+    else{
+        NewReminder(name, counter);
+        return;
+    }
+}
+
+void TheReminder(const string name, const string counter){
+    cout << "Would you like to review or edit your reminders? (y/n)" << endl;
+	cin >> answer;
+	if(answer == 'n'){
+		cout << "WHY DID YOU RUN THIS PROGRAM ANYWAYS.";
+		return 0;
+    } else if(answer != 'y'){
+		perror("Invalid answer. Program will exit.");
+		return 0;
+	}
+
+    cout << "Now opening the file named: " << name<<counter<<".txt\n";
+    ifstream infile(name+counter+".txt");
+    EachPart[] TheList = new EachPart[20];
+    int i = 0;
+    int month, day, year;
+    string category, assignment;
+    while(infile >> month >> day >> year >> category >> assignment){
+        TheList[i].month = month;
+        TheList[i].day = day;
+        TheList[i].year = year;
+        TheList[i].category = category;
+        TheList[i].assignment = assignment;
+        i++;
     }
 
     infile.close();
+    return;
 }

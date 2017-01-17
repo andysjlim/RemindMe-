@@ -54,16 +54,11 @@ int main(int argc, const char**argv){
 		perror("There was something wrong with your inputs along the way. Program will exit");
 		return 0;
 	}
-	//I don't think names have numbers in them?
-	if(!is_name(name)){
-		perror("Is that your real name bruh?");
-		return 0;
-	}
 	//Checks if the file name doesn't exists after ALL THAT CHECKING;
-	if(!foundUser(name+counter)){
+	if(!foundUser(name)){
 		cout << "It seems like this name does not exist in the file." 
 			 <<"Would you like to make a new file with the name, " << name << counter << "? (y/n)\n";
-		cin >> answer;
+		getline(cin, answer);
 		if(answer == "y"){
 			NewReminder(name, counter);
 		} else{

@@ -15,15 +15,13 @@ string answer;
  */
 int dateorder = 1;
 
-//Done
-bool is_name(const string &s){
-    int i= 0;
-    while(s[i]){
-        if(!(isalpha(s[i]))) return false;
-        i++;
-    }
-    return true;
-}
+/*
+ * 0 = none
+ * 1 = alphabeticaly
+ * 2 = chronologically
+ * 3 = category
+ */
+ int reminderorder = 0;
 
 //Done
 bool is_number(const string& s){
@@ -33,270 +31,6 @@ bool is_number(const string& s){
         i++;
     }
     return true;
-}
-
-//Done
-bool foundUser(const string name){
-    ifstream infile(name+".txt");
-    if(infile.is_open()){
-        infile.close();
-        return true;
-    }
-    else{
-        return false;
-    }
-}
-
-//Done
-void EditNameCount(const string name){
-    ifstream Names("NameList.txt");
-    NameList List[10];
-    int size = 0;
-    while(Names >> names >> count){
-        List[size].name = names;
-        List[size].count = count;
-        size++;
-    }
-
-    if(!foundUser(name)){
-        List[count].name = name;
-        List[size].count = 1;
-    } else {
-        //Find location needed to be incremented.
-        int counter = 0;
-        while((List[counter].name != name) && (counter < size)){
-            counter++;
-        }
-        List[counter].count++;
-    }
-    Names.close();
-    
-    //Rewrite
-    ofstream NewCount("NameList.txt");
-    int i = 0;
-    while(i < size){
-        NewCount << List[i].name << List[i].count;
-        i++;
-    }
-    NewCount.close();
-    return;
-}
-
-void NewReminder(const string name, const string counter){
-    cout << "Creating a new reminder file for " << name << ".\n";
-    cout << "File name will be " << name << counter << ".txt\n\n\n\n\n";
-    ofstream outfile(name+counter+".txt");
-    outfile.close();
-    EditNameCount(name);
-}
-
-//Find the amount of times the name was used.
-//Also edit the file so that the count is incremented.
-string FindCounter(const string name){
-    if(name == ""){
-        ifstream infile("NameList.txt");
-        infile.close();
-    }
-    return "";
-}
-
-//Create new user if not found in files.
-//Done I hope
-void createNewUser(const string name, string& counter){
-    if(foundUser(name+counter)){
-        cout << "This user already exists. Are you sure you want to make a new file? (y/n)" << endl;
-        getline(cin, answer);
-        if(answer == "y"){
-            counter = FindCounter(name);
-            NewReminder(name, counter);
-        }
-        else if(answer == "n") {
-            cout << "What is the number after your name in your file? (press Enter if no number) \n";
-            getline(cin, counter);
-            if(is_number(counter)){
-                return;
-            } else{
-                perror("This user does not exist or you have inputted an invalid input. Program will exit");
-                counter = "0";
-                return;
-            }
-        }
-        else{
-            perror("Invalid input");
-            counter = "0";
-            return;
-        }
-    }
-    else{
-        NewReminder(name, counter);
-        return;
-    }
-}
-
-//Done
-void TheReminder(const string name, const string counter){
-    cout << "Would you like to review or edit your reminders? (y/n)" << endl;
-    getline(cin,answer);
-	if(answer == "n"){
-		cout << "WHY DID YOU RUN THIS PROGRAM ANYWAYS.";
-		return;
-    } else if(answer != "y"){
-		perror("Invalid answer. Program will exit.");
-		return;
-	}
-
-    cout << "\n\n\n\n\n\n\n\n\nNow opening the file named: " << name<<counter<<".txt\n";
-    ifstream infile(name+counter+".txt");
-    EachPart TheList[20];
-    int size = 0;
-    int month, day, year;
-    string category, assignment;
-    while(infile >> month >> day >> year >> category >> assignment){
-        TheList[size].month = month;
-        TheList[size].day = day;
-        TheList[size].year = year;
-        TheList[size].category = category;
-        TheList[size].assignment = assignment;
-        size++;
-    }
-
-    int weirdanswer = 0;
-
-    while(answer != "6"){
-        cout << "What would you like to do, " << name << "?\n"
-            << "1 = Check reminders.\n" << "2 = Add reminders.\n" 
-            << "3 = Delete reminders.\n" << "4 = Sort reminders.\n" 
-            << "5 = Date settings.\n" <<  "6 = Exit.\n";
-        getline(cin, answer);
-        
-        switch(stoi(answer)){
-            case 1:{
-                CheckReminder(TheList, size);
-                weirdanswer = 0;
-                break;
-            }
-            case 2:{
-                AddReminder(TheList, size);
-                weirdanswer = 0;
-                break;
-            }
-            case 3:{
-                DeleteReminder(TheList, size);
-                weirdanswer = 0;
-                break;
-            }
-            case 4:{
-                SortReminder(TheList, size);
-                weirdanswer = 0;
-                break;
-            }
-            case 5:{
-                Settings();
-                break;
-            }
-            case 6:{
-                cout << "Program will now exit.\n";
-                break;
-            }
-            default:{
-                weirdanswer++;
-                if(weirdanswer == 3){
-                    cout << "You gave me too much weird answers. I'm gonna exit.\n";
-                    answer = "6";
-                    break;
-                }
-                cout << "You gave a weird answer. Asking you the question again.\n";
-                break;
-            }
-    }
-
-    }
-    infile.close();
-
-    //Save the content!
-    ofstream outfile(name+counter+".txt");
-    EditContent(TheList, outfile, size);
-    outfile.close();
-    return;
-}
-
-//Done
-void CheckReminder(EachPart list[], int size){
-    if(size == 0){
-        cout << "You currently have no reminders! Would you like to add some?(y/n)\n";
-        getline(cin, answer);
-        if(answer == "y"){
-            AddReminder(list, 0);
-        } else{
-            return;
-        }
-    }
-
-    int i = 0;
-    while(i < size){
-        PrintReminder(list[i], dateorder);
-        i++;
-    }
-}
-
-//Done
-void PrintReminder(EachPart one, int& order){
-    switch(order){
-        case 1:{
-            cout << one.assignment << "\t" << one.category << "\t" << one.month << one.day << one.year << endl;
-            break;
-        }
-        case 2:{
-            cout << one.assignment << "\t" << one.category << "\t" << one.day << one.month << one.year << endl;
-            break;
-        }
-        case 3:{
-            cout << one.assignment << "\t" << one.category << "\t" << one.year << one.month << one.year << endl;
-            break;
-        }
-        default: {
-            cout << "How did you get here? Setting order to default: Month, Day, Year\n" << endl;
-            order = 1;
-            break;
-        }
-    }
-}
-
-//I think I'm done
-void AddReminder(EachPart list[], int size){
-    EachPart New;
-    cout << "What is the name of this assignment?\n";
-    getline(cin, New.assignment);
-    cout << "What is the category of this assignment?\n";
-    getline(cin, New.category);
-    cout << "Month, day, year on EACH SEPARATE LINE\n";
-    cin >> New.month;
-    cin >> New.day;
-    cin >> New.year;
-    New.year = (New.year%1000)%100; //Let's just hope no one uses this in 22nd century
-
-    while(!(ValidDates(New.month, New.day, New.year))){
-        cout << "You gave me a weird date." << New.month << New.day << New.year << ".\nWould you like to edit?(y/n)\n";
-        getline(cin, answer);
-        if(answer == "y"){
-            EditVariables(New);
-        }
-    }
-
-    //If user is a girl and takes millions of thoughts to make a correct input. Will not accept more than 3 corrections.
-    int correctioncounter = 0;
-    while(!(Confirm(New))){
-        if(correctioncounter>3){
-            cout << "Make up your mind!! I'm not putting this.\n"
-            return;
-        }
-        EditVariables(New);
-        correctioncounter++;
-    }
-
-    list[size] = New;
-    size++;
-    return;
 }
 
 //Done
@@ -331,36 +65,143 @@ bool ValidDates(int month, int day, int year){
     return true;
 }
 
+bool Confirm(EachPart &one){
+    string ConfirmAnswer;
+    cout << "Are you satisfied with the following: (y/n)\nAssignment:"
+        << one.assignment << "\tCategory:" << one.category 
+        << "\tMonth:" << one.month << "\tDay:" << one.day << "\tYear:20" << one.year << "\n";
+    getline(cin,ConfirmAnswer);
+    if(ConfirmAnswer == "y")
+    return true;
+    else{
+        return false;
+    }
+}
+
+//Find the amount of times the name was used.
+//Also edit the file so that the count is incremented.
+string FindCounter(const string name){
+    ifstream ListOfName("NameList.txt");
+    NameList List[10];
+    int size = 0;
+    string nameOf;
+    int count;
+    while(ListOfName >> nameOf >> count){
+        List[size].name = nameOf;
+        List[size].count = count;
+        size++;
+    }
+    int i = 0;
+    while((List[i].name != name && i < size)){
+        i++;
+    }
+    return to_string(List[i].count);
+}
+
+//Lied
+bool foundUser(NameList a[], const string name, int size){
+    int i = 0;
+    while(i < size){
+        if(a[i].name == name){
+            return true;
+        }
+        i++;
+    }
+    return false;
+}
+
+bool foundUser(const string name){
+    ifstream ListOfName("NameList.txt");
+    NameList List[10];
+    int size = 0;
+    string nameOf;
+    int count;
+    while(ListOfName >> nameOf >> count){
+        List[size].name = nameOf;
+        List[size].count = count;
+        size++;
+    }
+    return foundUser(List, name, size);
+}
+
+//Done
+void EditNameCount(const string name){
+    ifstream ListOfNames("NameList.txt");
+    NameList List[10];
+    int size = 0;
+    string nameOf;
+    int count;
+    while(ListOfNames >> nameOf >> count){
+        List[size].name = nameOf;
+        List[size].count = count;
+        size++;
+    }
+
+    if(!foundUser(List, name, size)){
+        List[size].name = name;
+        List[size].count = 1;
+        size++;
+    } else {
+        //Find location needed to be incremented.
+        int counter = 0;
+        while((List[counter].name != name) && (counter < size)){
+            counter++;
+        }
+        List[counter].count++;
+    }
+    ListOfNames.close();
+    
+    //Rewrite
+    ofstream NewCount("NameList.txt");
+    int i = 0;
+    while(i < size){
+        NewCount << List[i].name << "\t" << List[i].count;
+        i++;
+    }
+    NewCount.close();
+    return;
+}
+
 //
 void EditContent(EachPart list[], ofstream& file, int size){
     int i = 0;
     while(i < size){
-        file << list[i].month << list[i].day << list[i].year << list[i].category << list[i].assignment;
+        file << list[i].month << "\t" << list[i].day << "\t" << list[i].year 
+        << "\t" << list[i].category << "\t" << list[i].assignment;
         i++;
     }
 }
 
-void SortReminder(EachPart list[], int size){
-
-}
-
 //Done
-void EditVariables(EachPart one){
-    while(answer != "4"){
-    cout << "Which part would you like to edit?"
+void EditVariables(EachPart &one){
+    string EditAnswer,month,day,year;
+    while(EditAnswer != "4"){
+    cout << "Which part would you like to edit?\n"
         << "1. Date\n"
         << "2. Category\n"
         << "3. Assignment details\n"
-        << "4. Nothing. I changed my mind.\n";
-    getline(cin, answer);
-    switch(stoi(answer)){
+        << "4. Nothing. I'm done.\n";
+    getline(cin, EditAnswer);
+    switch(stoi(EditAnswer)){
         case 1:
             cout << "Enter your new date in these order: Month, day, year on EACH SEPARATE LINE\n";
-            cin >> one.month >> one.day >> one.year;
+            getline(cin, month);
+            getline(cin, day);
+            getline(cin, year);
+            one.month = stoi(month);
+            one.day = stoi(day);
+            one.year = stoi(year);
+            one.year = (one.year%1000)%100;
             while(!(ValidDates(one.month, one.day, one.year))){
               cout << "You gave me a weird date." << one.month << one.day << one.year << "Do it again until it's right.\n";
               cout << "Enter your new date in these order: Month, day, year on EACH SEPARATE LINE\n";
-              cin >> one.month >> one.day >> one.year;
+              getline(cin, month);
+              getline(cin, day);
+              getline(cin, year);
+              one.month = stoi(month);
+              one.day = stoi(day);
+              one.year = stoi(year);
+              one.year = (one.year%1000)%100;
             }
             break;
         case 2:
@@ -368,7 +209,7 @@ void EditVariables(EachPart one){
             getline(cin, one.category);
         break;
         case 3:{
-            cout << "Edit your assignment details\n"
+            cout << "Edit your assignment details\n";
             getline(cin, one.assignment);
             break;
         }
@@ -379,24 +220,259 @@ void EditVariables(EachPart one){
             cout << "Wrong input. Asking again.\n";
         break;
     }
+    if(Confirm(one)){
+        return;
+    }
     }
 }
 
-void DeleteReminder(EachPart list[], int size){
+void NewReminder(const string name, const string counter){
+    cout << "Creating a new reminder file for " << name << ".\n";
+    cout << "File name will be " << name << counter << ".txt\n\n\n\n\n";
+    ofstream outfile(name+counter+".txt");
+    outfile.close();
+    EditNameCount(name);
+}
+
+//Create new user if not found in files.
+//Done I hope
+void createNewUser(const string name, string& counter){
+    if(foundUser(name+counter)){
+        cout << "This user already exists. Are you sure you want to make a new file? (y/n)" << endl;
+        getline(cin, answer);
+        if(answer == "y"){
+            counter = FindCounter(name);
+            NewReminder(name, counter);
+        }
+        else if(answer == "n") {
+            cout << "What is the number after your name in your file? (type 0 if no number) \n";
+            getline(cin, counter);
+            if(counter == "0"){
+                counter = "";
+            }
+            if(is_number(counter)){
+                return;
+            } else{
+                perror("This user does not exist or you have inputted an invalid input. Program will exit");
+                counter = "0";
+                return;
+            }
+        }
+        else{
+            perror("Invalid input");
+            counter = "0";
+            return;
+        }
+    }
+    else{
+        NewReminder(name, counter);
+        return;
+    }
+}
+
+//Done
+void TheReminder(const string name, const string counter){
+    string ReminderAns1;
+    cout << "Would you like to review or edit your reminders? (y/n)" << endl;
+    getline(cin,ReminderAns1);
+	if(ReminderAns1 == "n"){
+		cout << "WHY DID YOU RUN THIS PROGRAM ANYWAYS.";
+		return;
+    } else if(ReminderAns1 != "y"){
+		perror("Invalid answer. Program will exit.");
+		return;
+	}
+    ifstream infile(name+counter+".txt");
+    EachPart TheList[20];
+    int size = 0;
+    int month, day, year;
+    string category, assignment;
+    while(infile >> month >> day >> year >> category >> assignment){
+        TheList[size].month = month;
+        TheList[size].day = day;
+        TheList[size].year = year;
+        TheList[size].category = category;
+        TheList[size].assignment = assignment;
+        size++;
+    }
+
+    int weirdanswer = 0;
+
+    string ReminderAns;
+    while(ReminderAns != "6"){
+        cout << "\n\n\nWhat would you like to do, " << name << "?\n"
+            << "1 = Check reminders.\n" << "2 = Add reminders.\n" 
+            << "3 = Delete reminders.\n" << "4 = Sort reminders.\n" 
+            << "5 = Date settings.\n" <<  "6 = Exit.\n";
+        getline(cin, ReminderAns);
+        
+        switch(stoi(ReminderAns)){
+            case 1:{
+                CheckReminder(TheList, size);
+                weirdanswer = 0;
+                break;
+            }
+            case 2:{
+                AddReminder(TheList, size);
+                weirdanswer = 0;
+                break;
+            }
+            case 3:{
+                DeleteReminder(TheList, size);
+                weirdanswer = 0;
+                break;
+            }
+            case 4:{
+                SortReminder(TheList, size);
+                weirdanswer = 0;
+                break;
+            }
+            case 5:{
+                Settings();
+                break;
+            }
+            case 6:{
+                cout << "Program will now exit.\n";
+                break;
+            }
+            default:{
+                weirdanswer++;
+                if(weirdanswer == 3){
+                    cout << "You gave me too much weird answers. I'm gonna exit.\n";
+                    ReminderAns = "6";
+                    break;
+                }
+                cout << "You gave a weird answer. Asking you the question again.\n";
+                break;
+            }
+    }
+
+    }
+    infile.close();
+
+    //Save the content!
+    ofstream outfile(name+counter+".txt");
+    EditContent(TheList, outfile, size);
+    outfile.close();
+    return;
+}
+
+//Done
+void CheckReminder(EachPart list[], int& size){
+    if(size == 0){
+        cout << "You currently have no reminders! Would you like to add some?(y/n)\n";
+        getline(cin, answer);
+        if(answer == "y"){
+            AddReminder(list, size);
+        } else{
+            return;
+        }
+    }
+
+    cout << "\n\n";
+    int i = 0;
+    while(i < size){
+        PrintReminder(list[i], dateorder);
+        i++;
+    }
+    cout << "\n\n\n";
+}
+
+//Done
+void PrintReminder(EachPart one, int& order){
+    switch(order){
+        case 1:{
+            cout << one.assignment << "\t" << one.category << "\t" << one.month << "/" << one.day << "/" << one.year << endl;
+            break;
+        }
+        case 2:{
+            cout << one.assignment << "\t" << one.category << "\t" << one.day << "/" << one.month << "/" << one.year << endl;
+            break;
+        }
+        case 3:{
+            cout << one.assignment << "\t" << one.category << "\t" << one.year << "/" << one.month << "/" << one.day << endl;
+            break;
+        }
+        default: {
+            cout << "How did you get here? Setting order to default: Month, Day, Year\n" << endl;
+            order = 1;
+            break;
+        }
+    }
+}
+
+//I think I'm done
+void AddReminder(EachPart list[], int& size){
+    EachPart New;
+    string month1,day1,year1;
+    cout << "\n\n\nWhat is the name of this assignment?\n";
+    getline(cin, New.assignment);
+    cout << "What is the category of this assignment?\n";
+    getline(cin, New.category);
+    cout << "Month, day, year on EACH SEPARATE LINE\n";
+    getline(cin, month1);
+    getline(cin, day1);
+    getline(cin, year1);
+    New.month = stoi(month1);
+    New.day = stoi(day1);
+    New.year = stoi(year1);
+    New.year = (New.year%1000)%100; //Let's just hope no one uses this in 22nd century
+
+    while(!(ValidDates(New.month, New.day, New.year))){
+        cout << "You gave me a weird date." << New.month << New.day << New.year << ".\nWould you like to edit?(y/n)\n";
+        getline(cin, answer);
+        if(answer == "y"){
+            EditVariables(New);
+        }
+    }
+
+    //If user is a girl and takes millions of thoughts to make a correct input. Will not accept more than 3 corrections.
+    int correctioncounter = 0;
+    while(!(Confirm(New))){
+        if(correctioncounter>3){
+            cout << "Make up your mind!! I'm not putting this.\n";
+            return;
+        }
+        EditVariables(New);
+        correctioncounter++;
+    }
+
+    list[size] = New;
+    size++;
+    return;
+}
+
+void DeleteReminder(EachPart list[], int& size){
+    if(size == 0){
+        cout << "There is nothing to delete. This function will stop";
+        return;
+    }
+    cout << "Which reminder would you like to remove?\n";
+    int i = 0;
+    cout << "0. Not remove anything\n";
+    while(i < size){
+        cout << i+1 << ".\t";
+        PrintReminder(list[i], dateorder);
+        i++;
+    }
+    int ItemToRemove = 0;
+    cin >> ItemToRemove;
+    if(ItemToRemove == 0){
+        cout << "Not removing anything\n";
+        return;
+    }
+    for(int j = ItemToRemove-1; j < size-1; j++){
+        list[j] = list[j+1];
+    }
     size--;
 }
 
-bool Confirm(EachPart one){
-    cout << "Are you satisfied with the following: (y/n)\nAssignment:"
-        << one.assignment << "\tCategory:" << one.category 
-        << "\tMonth:" << one.month << "\tDay:" << one.day << "\tYear:20" << one.year << endl;
-    getline(cin,answer);
-    if(answer != "y")
-    return false;
+void SortReminder(EachPart list[], int size){
+
 }
 
 void Settings(){
-    cout << "How would you like to see the order of the dates?"
+    cout << "How would you like to see the order of the dates?\n"
         << "1 = month, day, year\n"
         << "2 = day, month, year\n"
         << "3 = year, month, day\n";

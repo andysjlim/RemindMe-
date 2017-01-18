@@ -468,17 +468,130 @@ void DeleteReminder(EachPart list[], int& size){
 }
 
 void SortReminder(EachPart list[], int size){
+    string SortAns;
+    cout << "How would you like to see the order of reminders?\n"
+        << "0 = I don't care\n"
+        << "1 = Alphabetically\n"
+        << "2 = Chronologically\n"
+        << "3 = Categorically\n";
+    getline(cin, SortAns);
+    if(!is_number(SortAns)){
+        cout << "Weird input there. Will cancel this instruction.\n";
+        return;
+    }
+    switch(stoi(SortAns)){
+        case 0:{
+            return;
+            break;
+        }
+        case 1:{
+            MergeSort(list, 0, size-1, 1);
+            break;
+        }
+        case 2:{
+            MergeSort(list, 0, size-1. 2);
+            break;
+        }
+        case 3:{
+            MergeSort(list, 0, size-1, 3);
+            break;
+        }
+        default:{
+            cout << "Not a valid answer. Will cancel this instruction.\n";
+            return;
+            break;
+        }
+    }
+}
 
+void MergeSort(EachPart list[], int left, int right, int order){
+    if(left < right){
+        int middle = left + (right-1)/2;
+        MergeSort(list, left, middle, order);
+        MergeSort(list, middle+1, right, order);
+        Merge(list, left, middle, right, order);
+    }
+}
+
+void Merge(EachPart list[], int l, int m, int r, int o){
+    int i,j,k;
+    EachPart temp[20];
+    i = l;
+    k = l;
+    j = m + 1;
+    switch(o){
+        //alphabetically
+        case 1:{
+            char left, right;
+            while(i <= mid && j <= r){
+                left = (list[i].assignment)[0];
+                right = (list[j].assignment)[0];
+                if(left < right){
+                    temp[k] = list[i];
+                    k++;
+                    i++;
+                } else{
+                    temp[k] = list[j];
+                    k++;
+                    j++;
+                }
+            }
+            break;
+        }
+        //Chronologically
+        case 2:{
+
+            break;
+        }
+        //categorically
+        case 3:{
+            char left, right;
+            while(i <= mid && j <= r){
+                left = (list[i].category)[0];
+                right =(list[j].category)[0];
+                if(left < right){
+                    temp[k] = list[i];
+                    k++;
+                    i++;
+                }
+                else{
+                    temp[k] = list[j];
+                    k++;
+                    j++;
+                }
+            }
+            break;
+        }
+        default:{
+            //It should never get here..?
+            cout << "How are you here?\n";
+            break;
+        }
+    }
+    while(i <= m){
+        temp[k] = list[i];
+        k++;
+        i++;
+    }
+    while(j <= r){
+        temp[k] = list[j];
+        k++;
+        j++;
+    }
+    for(i = l; i < k; i++){
+        list[i] = temp[i];
+    }
 }
 
 void Settings(){
+    string SettingAns;
     cout << "How would you like to see the order of the dates?\n"
         << "1 = month, day, year\n"
         << "2 = day, month, year\n"
         << "3 = year, month, day\n";
-    getline(cin, answer);
-    if(is_number(answer)){
-        dateorder = stoi(answer);
+    getline(cin, SettingAns);
+    if(is_number(SettingAns)){
+        dateorder = stoi(SettingAns);
     }else{
         cout << "You inputted a weird number/non-number. Will set to default (m,d,y)\n";
         dateorder = 1;

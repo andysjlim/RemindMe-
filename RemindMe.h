@@ -34,6 +34,8 @@ void EditContent(EachPart list[], ofstream& file, int size);
 bool Confirm(EachPart &one);
 void EditVariables(EachPart &one);
 bool ValidDates(int month, int day, int year);
+void Merge(EachPart list[], int l, int m, int r, int o);
+void MergeSort(EachPart list[], int left, int right, int order);
 
 
 #endif

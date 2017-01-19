@@ -78,96 +78,12 @@ bool Confirm(EachPart &one){
     }
 }
 
-//Find the amount of times the name was used.
-//Also edit the file so that the count is incremented.
-string FindCounter(const string name){
-    ifstream ListOfName("NameList.txt");
-    NameList List[10];
-    int size = 0;
-    string nameOf;
-    int count;
-    while(ListOfName >> nameOf >> count){
-        List[size].name = nameOf;
-        List[size].count = count;
-        size++;
-    }
-    int i = 0;
-    while((List[i].name != name && i < size)){
-        i++;
-    }
-    return to_string(List[i].count);
-}
-
-//Lied
-bool foundUser(NameList a[], const string name, int size){
-    int i = 0;
-    while(i < size){
-        if(a[i].name == name){
-            return true;
-        }
-        i++;
-    }
-    return false;
-}
-
-bool foundUser(const string name){
-    ifstream ListOfName("NameList.txt");
-    NameList List[10];
-    int size = 0;
-    string nameOf;
-    int count;
-    while(ListOfName >> nameOf >> count){
-        List[size].name = nameOf;
-        List[size].count = count;
-        size++;
-    }
-    return foundUser(List, name, size);
-}
-
-//Done
-void EditNameCount(const string name){
-    ifstream ListOfNames("NameList.txt");
-    NameList List[10];
-    int size = 0;
-    string nameOf;
-    int count;
-    while(ListOfNames >> nameOf >> count){
-        List[size].name = nameOf;
-        List[size].count = count;
-        size++;
-    }
-
-    if(!foundUser(List, name, size)){
-        List[size].name = name;
-        List[size].count = 1;
-        size++;
-    } else {
-        //Find location needed to be incremented.
-        int counter = 0;
-        while((List[counter].name != name) && (counter < size)){
-            counter++;
-        }
-        List[counter].count++;
-    }
-    ListOfNames.close();
-    
-    //Rewrite
-    ofstream NewCount("NameList.txt");
-    int i = 0;
-    while(i < size){
-        NewCount << List[i].name << "\t" << List[i].count;
-        i++;
-    }
-    NewCount.close();
-    return;
-}
-
 //
 void EditContent(EachPart list[], ofstream& file, int size){
     int i = 0;
     while(i < size){
         file << list[i].month << "\t" << list[i].day << "\t" << list[i].year 
-        << "\t" << list[i].category << "\t" << list[i].assignment;
+        << "\t" << list[i].category << "\t" << list[i].assignment <<"\n";
         i++;
     }
 }
@@ -223,50 +139,6 @@ void EditVariables(EachPart &one){
     if(Confirm(one)){
         return;
     }
-    }
-}
-
-void NewReminder(const string name, const string counter){
-    cout << "Creating a new reminder file for " << name << ".\n";
-    cout << "File name will be " << name << counter << ".txt\n\n\n\n\n";
-    ofstream outfile(name+counter+".txt");
-    outfile.close();
-    EditNameCount(name);
-}
-
-//Create new user if not found in files.
-//Done I hope
-void createNewUser(const string name, string& counter){
-    if(foundUser(name+counter)){
-        cout << "This user already exists. Are you sure you want to make a new file? (y/n)" << endl;
-        getline(cin, answer);
-        if(answer == "y"){
-            counter = FindCounter(name);
-            NewReminder(name, counter);
-        }
-        else if(answer == "n") {
-            cout << "What is the number after your name in your file? (type 0 if no number) \n";
-            getline(cin, counter);
-            if(counter == "0"){
-                counter = "";
-            }
-            if(is_number(counter)){
-                return;
-            } else{
-                perror("This user does not exist or you have inputted an invalid input. Program will exit");
-                counter = "0";
-                return;
-            }
-        }
-        else{
-            perror("Invalid input");
-            counter = "0";
-            return;
-        }
-    }
-    else{
-        NewReminder(name, counter);
-        return;
     }
 }
 
@@ -489,7 +361,7 @@ void SortReminder(EachPart list[], int size){
             break;
         }
         case 2:{
-            MergeSort(list, 0, size-1. 2);
+            MergeSort(list, 0, size-1, 2);
             break;
         }
         case 3:{
@@ -520,10 +392,10 @@ void Merge(EachPart list[], int l, int m, int r, int o){
     k = l;
     j = m + 1;
     switch(o){
-        //alphabetically
+        //alphabetically; done
         case 1:{
             char left, right;
-            while(i <= mid && j <= r){
+            while(i <= m && j <= r){
                 left = (list[i].assignment)[0];
                 right = (list[j].assignment)[0];
                 if(left < right){
@@ -538,15 +410,34 @@ void Merge(EachPart list[], int l, int m, int r, int o){
             }
             break;
         }
-        //Chronologically
+        //Chronologically; not done
         case 2:{
-
+            int left, right;
+            string stringleft, stringright;
+            cout << "I'm here\n";
+            while(i <= m && j <= r){
+                stringleft = (list[i].year)+(list[i].month)+(list[i].day);
+                stringright = (list[j].year)+(list[j].month)+(list[j].day);
+                cout << "I'm here\n" << stringleft << endl << stringright<<endl;
+                left = stoi(stringleft);
+                right = stoi(stringright);
+                cout << "I'm here\n";
+                if(left < right){
+                    temp[k] = list[i];
+                    k++;
+                    i++;
+                }else{
+                    temp[k] = list[j];
+                    k++;
+                    j++;
+                }
+            }
             break;
         }
-        //categorically
+        //categorically; done
         case 3:{
             char left, right;
-            while(i <= mid && j <= r){
+            while(i <= m && j <= r){
                 left = (list[i].category)[0];
                 right =(list[j].category)[0];
                 if(left < right){

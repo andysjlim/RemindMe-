@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string>
 #include <fstream>
+#include <sstream>
 #include "RemindMe.h"
 using namespace std;
 
@@ -34,27 +35,33 @@ bool is_number(const string& s){
 }
 
 //Done
-bool ValidDates(int month, int day, int year){
-    if(day < 0)
+bool ValidDates(string month, string day, string year){
+    if(!(is_number(month) && is_number(day) && is_number(year))){
         return false;
-    if(year < 0)
+    }
+    int day1 = stoi(day);
+    int year1 = stoi(year);
+    int month1 = stoi(month);
+    if(day1 < 0)
         return false;
-    switch(month){
+    if(year1 < 0)
+        return false;
+    switch(month1){
         case 1: case 3: case 5:
         case 7: case 8: case 10:
         case 12:
-            if(day > 31)
+            if(day1 > 31)
             return false;
             break;
         case 4: case 6:
         case 9: case 11:
-            if(day > 30)
+            if(day1 > 30)
             return false;
             break;
         case 2:
-            if(year%4==0 && day > 29)
+            if(year1%4==0 && day1 > 29)
             return false;
-            if(day > 28)
+            if(day1 > 28)
             return false;
             break;
         default:
@@ -69,7 +76,7 @@ bool Confirm(EachPart &one){
     string ConfirmAnswer;
     cout << "Are you satisfied with the following: (y/n)\nAssignment:"
         << one.assignment << "\tCategory:" << one.category 
-        << "\tMonth:" << one.month << "\tDay:" << one.day << "\tYear:20" << one.year << "\n";
+        << "\tMonth:" << one.month << "\tDay:" << one.day << "\tYear:" << one.year << "\n";
     getline(cin,ConfirmAnswer);
     if(ConfirmAnswer == "y")
     return true;
@@ -90,7 +97,7 @@ void EditContent(EachPart list[], ofstream& file, int size){
 
 //Done
 void EditVariables(EachPart &one){
-    string EditAnswer,month,day,year;
+    string EditAnswer;
     while(EditAnswer != "4"){
     cout << "Which part would you like to edit?\n"
         << "1. Date\n"
@@ -101,23 +108,15 @@ void EditVariables(EachPart &one){
     switch(stoi(EditAnswer)){
         case 1:
             cout << "Enter your new date in these order: Month, day, year on EACH SEPARATE LINE\n";
-            getline(cin, month);
-            getline(cin, day);
-            getline(cin, year);
-            one.month = stoi(month);
-            one.day = stoi(day);
-            one.year = stoi(year);
-            one.year = (one.year%1000)%100;
+            getline(cin, one.month);
+            getline(cin, one.day);
+            getline(cin, one.year);
             while(!(ValidDates(one.month, one.day, one.year))){
               cout << "You gave me a weird date." << one.month << one.day << one.year << "Do it again until it's right.\n";
               cout << "Enter your new date in these order: Month, day, year on EACH SEPARATE LINE\n";
-              getline(cin, month);
-              getline(cin, day);
-              getline(cin, year);
-              one.month = stoi(month);
-              one.day = stoi(day);
-              one.year = stoi(year);
-              one.year = (one.year%1000)%100;
+              getline(cin, one.month);
+              getline(cin, one.day);
+              getline(cin, one.year);
             }
             break;
         case 2:
@@ -157,14 +156,14 @@ void TheReminder(const string name, const string counter){
     ifstream infile(name+counter+".txt");
     EachPart TheList[20];
     int size = 0;
-    int month, day, year;
-    string category, assignment;
-    while(infile >> month >> day >> year >> category >> assignment){
-        TheList[size].month = month;
-        TheList[size].day = day;
-        TheList[size].year = year;
-        TheList[size].category = category;
-        TheList[size].assignment = assignment;
+    string OneLine;
+    while(getline(infile, OneLine)){
+        istringstream TheLine(OneLine);
+        getline(TheLine, TheList[size].month, '\t');
+        getline(TheLine, TheList[size].day, '\t');
+        getline(TheLine, TheList[size].year, '\t');
+        getline(TheLine, TheList[size].category, '\t');
+        getline(TheLine, TheList[size].assignment, '\t');
         size++;
     }
 
@@ -177,7 +176,9 @@ void TheReminder(const string name, const string counter){
             << "3 = Delete reminders.\n" << "4 = Sort reminders.\n" 
             << "5 = Date settings.\n" <<  "6 = Exit.\n";
         getline(cin, ReminderAns);
-        
+        if(!(is_number(ReminderAns))){
+            ReminderAns = "7";
+        }
         switch(stoi(ReminderAns)){
             case 1:{
                 CheckReminder(TheList, size);
@@ -248,21 +249,22 @@ void CheckReminder(EachPart list[], int& size){
         i++;
     }
     cout << "\n\n\n";
+    return;
 }
 
 //Done
 void PrintReminder(EachPart one, int& order){
     switch(order){
         case 1:{
-            cout << one.assignment << "\t" << one.category << "\t" << one.month << "/" << one.day << "/" << one.year << endl;
+            cout << one.month+"/"+one.day+"/"+one.year+"\t"+one.assignment+"\t"+one.category+"\n";
             break;
         }
         case 2:{
-            cout << one.assignment << "\t" << one.category << "\t" << one.day << "/" << one.month << "/" << one.year << endl;
+            cout << one.day+"/"+one.month+"/"+one.year+"\t"+one.assignment+"\t"+one.category+"\n";
             break;
         }
         case 3:{
-            cout << one.assignment << "\t" << one.category << "\t" << one.year << "/" << one.month << "/" << one.day << endl;
+            cout << one.year+"/"+one.month+"/"+one.day+"\t"+one.assignment+"\t"+one.category+"\n";
             break;
         }
         default: {
@@ -271,6 +273,7 @@ void PrintReminder(EachPart one, int& order){
             break;
         }
     }
+    return;
 }
 
 //I think I'm done
@@ -282,13 +285,9 @@ void AddReminder(EachPart list[], int& size){
     cout << "What is the category of this assignment?\n";
     getline(cin, New.category);
     cout << "Month, day, year on EACH SEPARATE LINE\n";
-    getline(cin, month1);
-    getline(cin, day1);
-    getline(cin, year1);
-    New.month = stoi(month1);
-    New.day = stoi(day1);
-    New.year = stoi(year1);
-    New.year = (New.year%1000)%100; //Let's just hope no one uses this in 22nd century
+    getline(cin, New.month);
+    getline(cin, New.day);
+    getline(cin, New.year);
 
     while(!(ValidDates(New.month, New.day, New.year))){
         cout << "You gave me a weird date." << New.month << New.day << New.year << ".\nWould you like to edit?(y/n)\n";
@@ -315,6 +314,7 @@ void AddReminder(EachPart list[], int& size){
 }
 
 void DeleteReminder(EachPart list[], int& size){
+    string ItemToRemove;
     if(size == 0){
         cout << "There is nothing to delete. This function will stop";
         return;
@@ -327,16 +327,21 @@ void DeleteReminder(EachPart list[], int& size){
         PrintReminder(list[i], dateorder);
         i++;
     }
-    int ItemToRemove = 0;
-    cin >> ItemToRemove;
-    if(ItemToRemove == 0){
+    getline(cin, ItemToRemove);
+    if(!(is_number(ItemToRemove))){
+        cout << "Wrong input. Will ot rdelete.";
+        return;
+    }
+    int index = stoi(ItemToRemove);
+    if(index == 0){
         cout << "Not removing anything\n";
         return;
     }
-    for(int j = ItemToRemove-1; j < size-1; j++){
+    for(int j = index-1; j < size-1; j++){
         list[j] = list[j+1];
     }
     size--;
+    return;
 }
 
 void SortReminder(EachPart list[], int size){
@@ -374,15 +379,17 @@ void SortReminder(EachPart list[], int size){
             break;
         }
     }
+    return;
 }
 
 void MergeSort(EachPart list[], int left, int right, int order){
     if(left < right){
-        int middle = left + (right-1)/2;
+        int middle = (left + (right-1))/2;
         MergeSort(list, left, middle, order);
         MergeSort(list, middle+1, right, order);
         Merge(list, left, middle, right, order);
     }
+    return;
 }
 
 void Merge(EachPart list[], int l, int m, int r, int o){
@@ -392,7 +399,7 @@ void Merge(EachPart list[], int l, int m, int r, int o){
     k = l;
     j = m + 1;
     switch(o){
-        //alphabetically; done
+        //alphabetically;
         case 1:{
             char left, right;
             while(i <= m && j <= r){
@@ -410,18 +417,13 @@ void Merge(EachPart list[], int l, int m, int r, int o){
             }
             break;
         }
-        //Chronologically; not done
+        //Chronologically;
         case 2:{
             int left, right;
-            string stringleft, stringright;
             cout << "I'm here\n";
             while(i <= m && j <= r){
-                stringleft = (list[i].year)+(list[i].month)+(list[i].day);
-                stringright = (list[j].year)+(list[j].month)+(list[j].day);
-                cout << "I'm here\n" << stringleft << endl << stringright<<endl;
-                left = stoi(stringleft);
-                right = stoi(stringright);
-                cout << "I'm here\n";
+                left = stoi((list[i].year))*10000+stoi((list[i].month))*100+stoi((list[i].day));
+                right = stoi((list[j].year))*10000+stoi((list[j].month))*100+stoi((list[j].day));
                 if(left < right){
                     temp[k] = list[i];
                     k++;
@@ -434,7 +436,7 @@ void Merge(EachPart list[], int l, int m, int r, int o){
             }
             break;
         }
-        //categorically; done
+        //categorically;
         case 3:{
             char left, right;
             while(i <= m && j <= r){
@@ -472,6 +474,7 @@ void Merge(EachPart list[], int l, int m, int r, int o){
     for(i = l; i < k; i++){
         list[i] = temp[i];
     }
+    return;
 }
 
 void Settings(){
@@ -487,4 +490,5 @@ void Settings(){
         cout << "You inputted a weird number/non-number. Will set to default (m,d,y)\n";
         dateorder = 1;
     }
+    return;
 }

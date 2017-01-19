@@ -6,7 +6,7 @@
 using namespace std;
 
 struct EachPart {
-    int day,month,year;
+    string day,month,year;
     string assignment, category;
 };
 
@@ -22,7 +22,7 @@ void Settings();
 void EditContent(EachPart list[], ofstream& file, int size);
 bool Confirm(EachPart &one);
 void EditVariables(EachPart &one);
-bool ValidDates(int month, int day, int year);
+bool ValidDates(string month, string day, string year);
 void Merge(EachPart list[], int l, int m, int r, int o);
 void MergeSort(EachPart list[], int left, int right, int order);
 

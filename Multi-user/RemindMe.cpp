@@ -3,6 +3,7 @@
 #include <string>
 #include <fstream>
 #include <sstream>
+#include <time.h>
 #include "RemindMe.h"
 using namespace std;
 
@@ -22,7 +23,46 @@ int dateorder = 1;
  * 2 = chronologically
  * 3 = category
  */
- int reminderorder = 0;
+int reminderorder = 0;
+
+string currentDate(){
+    time_t now = time(0);
+    struct tm tstruct;
+    char buf[7];
+    tstruct = *localtime(&now);
+    strftime(buf, 8, "%Y%m%d", &tstruct);
+    return buf;
+}
+
+void deadline(string time, EachPart list[], int size){
+    string date;
+    int yeartoday = stoi(time.substr(0,4));
+    int monthtoday = stoi(time.substr(4,2));
+    int daytoday = stoi(time.substr(6));
+    int year,month,day;
+    cout << "Today is " << monthtoday << " " << daytoday << " " << yeartoday<<endl;
+    cout << "The following assignments are past the deadline, if any:\n";
+    for(int i = 0; i < size; i++){
+        year = stoi(list[i].year);
+        if(year < yeartoday){
+            PrintReminder(list[i], dateorder);
+            continue;
+        }else if(year == yeartoday){
+            month = stoi(list[i].month);
+            if(month < monthtoday){
+                PrintReminder(list[i], dateorder);
+                continue;
+            }else if(month == monthtoday){
+                day = stoi(list[i].day);
+                if(day < daytoday){
+                    PrintReminder(list[i], dateorder);
+                    continue;
+                }
+            }
+        }
+    }
+    return;
+}
 
 //Done
 bool is_number(const string& s){
@@ -273,6 +313,8 @@ void createNewUser(const string name, string& counter){
 
 //Done
 void TheReminder(const string name, const string counter){
+    string todaydate = currentDate();
+    cout << "Hi! Today's date is: " << todaydate << endl;
     string ReminderAns1;
     cout << "Would you like to review or edit your reminders? (y/n)" << endl;
     getline(cin,ReminderAns1);
@@ -296,9 +338,9 @@ void TheReminder(const string name, const string counter){
         getline(TheLine, TheList[size].assignment, '\t');
         size++;
     }
+    deadline(todaydate, TheList, size);
 
     int weirdanswer = 0;
-
     string ReminderAns;
     while(ReminderAns != "6"){
         cout << "\n\n\nWhat would you like to do, " << name << "?\n"

@@ -16,6 +16,8 @@ struct NameList {
     int count;
 };
 
+string currentDate();
+void deadline(string time, EachPart list[], int size);
 void createNewUser(const string name, string& counter);
 void TheReminder(const string name, const string counter);
 void NewReminder(const string name, const string counter);

@@ -10,7 +10,9 @@ struct EachPart {
     string assignment, category;
 };
 
-void TheReminder(const string name, const string counter);
+string currentDate();
+void deadline(string time, EachPart list[], int size);
+void TheReminder();
 bool is_number(const string& s);
 void EditNameCount(const string);
 void CheckReminder(EachPart list[], int& size);

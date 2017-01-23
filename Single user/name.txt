@@ -1,1 +1,2 @@
-3	14	2017	Class	Class
+1	27	2017	Discrete	HW1 in PDF
+2	3	2017	Prin Prog	HW1 in PDF

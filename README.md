@@ -3,5 +3,3 @@ Personal side project for me to use to remind myself daily of all assignments/ev
 
 # demo
 <img src="remindmedemo.gif>
-
-Compiled using g++

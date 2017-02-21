@@ -1,2 +1,6 @@
-1	27	2017	Discrete	HW1 in PDF
-2	3	2017	Prin Prog	HW1 in PDF
+2	24	2017	Prin Prog	Assignment 3
+2	26	2017	Systems	Assignment 1
+3	2	2017	Internship	Schneider Electric internship
+3	7	2017	Systems	Midterm
+3	8	2017	Prin Prog	Midterm
+4	4	2017	Discrete	Midterm

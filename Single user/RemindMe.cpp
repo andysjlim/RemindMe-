@@ -280,15 +280,15 @@ void CheckReminder(EachPart list[], int& size){
 void PrintReminder(EachPart one, int& order){
     switch(order){
         case 1:{
-            cout << one.month+"/"+one.day+"/"+one.year+"\t"+one.assignment+"\t"+one.category+"\n";
+            cout << one.month+"/"+one.day+"/"+one.year+"\t"+one.category+"\t"+one.assignment+"\n";
             break;
         }
         case 2:{
-            cout << one.day+"/"+one.month+"/"+one.year+"\t"+one.assignment+"\t"+one.category+"\n";
+            cout << one.day+"/"+one.month+"/"+one.year+"\t"+one.category+"\t"+one.assignment+"\n";
             break;
         }
         case 3:{
-            cout << one.year+"/"+one.month+"/"+one.day+"\t"+one.assignment+"\t"+one.category+"\n";
+            cout << one.year+"/"+one.month+"/"+one.day+"\t"+one.category+"\t"+one.assignment+"\n";
             break;
         }
         default: {
